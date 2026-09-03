@@ -1,6 +1,11 @@
 {
   "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
+  "build": {
+    "env": {
+      "UV_LINK_MODE": "copy"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
