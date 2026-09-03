@@ -1,0 +1,20 @@
+Existing Process Overview & Bottlenecks
+System: Legacy Clearing and Batch Ingestion System (LCBIS)
+Owner: Core Banking Infrastructure Group
+
+1. Process Narrative:
+Every evening at 23:00 UTC, clearing partners upload flat batch files (CSV and fixed-width ASCII) to an unsecured internal sFTP staging directory. A legacy Python cron job parses the files sequentially and inserts records directly into an on-premise Oracle Database.
+
+2. Timing & Execution:
+Batch job initiates at 23:30 UTC and runs until approximately 04:30 UTC. If an error occurs midway, the entire batch halts and triggers a PagerDuty alert to the on-call engineer.
+
+3. Volume:
+Standard volume: 450,000 transaction records per night.
+Peak end-of-month volume: 1,800,000 records.
+
+4. Known Pain Points & Problems:
+- Single point of failure: Cron script crash leaves database in inconsistent partial state.
+- No schema versioning: If a partner adds an unannounced field, parsing fails completely.
+- Lack of self-service: Operations team cannot re-run a single failed transaction; the entire file must be manually edited and re-uploaded.
+- Security risk: sFTP credentials are shared across third-party clearing vendors.
+- Lack of audit trail: No tamper-proof event logging for regulatory compliance reporting.

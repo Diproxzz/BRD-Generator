@@ -1,0 +1,11 @@
+Data Field Name,Description,Editable,Mandatory Field,Predefined Value(s)
+transaction_uuid,Unique globally identifier for transaction,No,Yes,UUIDv4
+merchant_id,Registered merchant entity account ID,No,Yes,Alpha-numeric (12 chars)
+terminal_id,Point of sale or digital client checkout ID,No,No,Alpha-numeric (8 chars)
+amount_cents,Total payment authorization value in lowest currency denomination,No,Yes,Positive Integer > 0
+currency_code,Three-letter ISO currency symbol,No,Yes,USD, EUR, GBP, CAD, JPY
+card_scheme,Payment network identifier,No,Yes,VISA, MASTERCARD, AMEX, DISCOVER
+settlement_status,Current lifecycle state of payment,Yes,Yes,PENDING, AUTHORIZED, SETTLED, DECLINED, QUARANTINED
+auth_code,Approval reference code returned by acquiring bank,No,No,6-digit alphanumeric
+risk_score,Fraud prevention risk assessment confidence rating,No,Yes,Float (0.00 to 100.00)
+created_at_utc,ISO 8601 timestamp of record ingestion,No,Yes,YYYY-MM-DDTHH:MM:SSZ

@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+backend/__pycache__/
+*/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment & Secrets
+.env
+.env.local
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Build artifacts
+frontend/dist/
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/exports/*
+!backend/exports/.gitkeep
+
+# IDE and system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
