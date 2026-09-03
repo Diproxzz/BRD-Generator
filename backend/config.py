@@ -19,8 +19,13 @@ class Settings:
     GEMINI_MODEL: str = "models/gemini-2.5-flash"
     
     BASE_DIR: str = os.path.dirname(os.path.abspath(__file__))
-    UPLOAD_DIR: str = os.path.join(BASE_DIR, "uploads")
-    EXPORT_DIR: str = os.path.join(BASE_DIR, "exports")
+    # On Vercel or serverless environments, only /tmp is writable
+    if os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+        UPLOAD_DIR: str = "/tmp/uploads"
+        EXPORT_DIR: str = "/tmp/exports"
+    else:
+        UPLOAD_DIR: str = os.path.join(BASE_DIR, "uploads")
+        EXPORT_DIR: str = os.path.join(BASE_DIR, "exports")
 
 settings = Settings()
 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
