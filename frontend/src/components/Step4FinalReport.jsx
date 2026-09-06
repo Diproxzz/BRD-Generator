@@ -384,7 +384,7 @@ export default function Step4FinalReport({
             <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               <span>{data?.project_name || "Business Requirements Document"}</span>
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
-                v{data?.version || "0.1"} Corporate Ready
+                v{data?.version || "0.1"}
               </span>
             </h2>
             <p className="text-[11px] text-gray-500">
@@ -471,7 +471,7 @@ export default function Step4FinalReport({
         <div className="border-b-2 border-[#0A2A5C] pb-6 pt-2">
           <div className="flex justify-between items-start text-[11px] text-gray-500 font-medium mb-3">
             <span>&lt;Function Name&gt; &lt;Sub Function Name&gt; &lt;Name of Process&gt;</span>
-            <span className="font-semibold text-[#0A2A5C]">Enterprise Business Solutions | LTIMindtree Format</span>
+            <span className="font-semibold text-[#0A2A5C]">Enterprise Business Solutions</span>
           </div>
           <h1 className="text-3xl font-extrabold text-[#0A2A5C] tracking-tight">
             {data?.project_name || "Enterprise Copilot & Data Platform"}
@@ -492,7 +492,7 @@ export default function Step4FinalReport({
           {/* Running Corporate Header matching PDF */}
           <div className="flex justify-between items-center text-[11px] text-gray-500 border-b border-gray-200 pb-2.5 font-medium">
             <span>&lt;Function/ Name&gt; &lt;Sub Function Name&gt; &lt;Name of Process&gt; | (Ver. 2.1/2026)</span>
-            <span className="font-extrabold text-[#0A2A5C] text-xs tracking-tight">LTIMindtree</span>
+            <span className="font-extrabold text-[#0A2A5C] text-xs tracking-tight">Enterprise Standard</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-between border-b-2 border-[#0A2A5C] pb-2 pt-1">
@@ -533,7 +533,7 @@ export default function Step4FinalReport({
 
           {/* Running Corporate Footer matching PDF */}
           <div className="flex justify-between items-center text-[10px] text-gray-400 border-t border-gray-200 pt-2.5 font-medium">
-            <span>LTIMindtree | Privileged and Confidential 2026</span>
+            <span>Privileged and Confidential 2026</span>
             <span>Page 2 of 30</span>
           </div>
         </section>

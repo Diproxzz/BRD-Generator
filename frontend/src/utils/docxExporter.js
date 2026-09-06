@@ -406,7 +406,7 @@ export async function exportDocxClient(data) {
                 alignment: AlignmentType.CENTER,
                 children: [
                   new TextRun({
-                    text: "LTIMindtree | Privileged and Confidential 2026",
+                    text: "Privileged and Confidential 2026",
                     color: "A0AAB4",
                     font: "Calibri",
                     size: 16

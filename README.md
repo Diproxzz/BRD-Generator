@@ -1,6 +1,6 @@
 # AI-Powered BRD Generator Web App
 
-An enterprise-grade, agentic Business Requirements Document (BRD) generator designed specifically for **Business Analysts (BAs)**. The application ingests raw project artifacts (meeting transcripts, architecture diagrams, emails, requirement dumps, spreadsheets) and automatically generates a fully formatted, corporate-standard `.docx` BRD matching top enterprise consulting templates (LTIMindtree / Corporate standard).
+An enterprise-grade, agentic Business Requirements Document (BRD) generator designed specifically for **Business Analysts (BAs)**. The application ingests raw project artifacts (meeting transcripts, architecture diagrams, emails, requirement dumps, spreadsheets) and automatically generates a fully formatted, corporate-standard `.docx` BRD matching top enterprise consulting templates.
 
 ## Highlights & Features
 
