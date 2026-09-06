@@ -3,7 +3,7 @@ from typing import Dict, Any, List
 import docx
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import nsdecls, qn
@@ -142,6 +142,55 @@ def add_callout_box(doc: Document, title: str, text: str):
     
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
 
+def add_toc_entry(doc: Document, num_and_title: str, page_str: str, level: int = 1, right_margin: float = 6.8):
+    p = doc.add_paragraph()
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after = Pt(1)
+    
+    if level == 1:
+        indent = 0.0
+        bold = True
+        color = PRIMARY_COLOR
+        font_size = 9.5
+    elif level == 2:
+        indent = 0.25
+        bold = False
+        color = PRIMARY_COLOR
+        font_size = 9.0
+    elif level == 3:
+        indent = 0.5
+        bold = False
+        color = TEXT_COLOR
+        font_size = 8.5
+    else:
+        indent = 0.75
+        bold = False
+        color = TEXT_COLOR
+        font_size = 8.5
+
+    p.paragraph_format.left_indent = Inches(indent)
+    p.paragraph_format.tab_stops.add_tab_stop(
+        Inches(right_margin - indent), WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS
+    )
+
+    run_title = p.add_run(num_and_title)
+    run_title.font.name = 'Calibri'
+    run_title.font.size = Pt(font_size)
+    run_title.font.bold = bold
+    run_title.font.color.rgb = color
+
+    run_tab = p.add_run('\t')
+    run_tab.font.name = 'Calibri'
+    run_tab.font.size = Pt(font_size)
+    run_tab.font.color.rgb = RGBColor(180, 180, 180)
+
+    run_page = p.add_run(str(page_str))
+    run_page.font.name = 'Calibri'
+    run_page.font.size = Pt(font_size)
+    run_page.font.bold = bold
+    run_page.font.color.rgb = color
+    return p
+
 def build_docx_brd(data: Dict[str, Any], output_path: str) -> str:
     doc = Document()
     
@@ -186,33 +235,71 @@ def build_docx_brd(data: Dict[str, Any], output_path: str) -> str:
     meta_p.add_run(f"Document Version: {version}\nDate: {date_str}\nAuthor: {author}\nStatus: Updated Requirements, Features and User Stories").font.color.rgb = TEXT_COLOR
     meta_p.paragraph_format.space_after = Pt(24)
     
-    # TABLE OF CONTENTS SUMMARY (Matching Page 2 of user's PDF)
+    # DEDICATED CONTENT PAGE: TABLE OF CONTENTS (Matching Page 2 & Page 1 of PDF)
+    doc.add_page_break()
     add_heading_styled(doc, "Table of Contents", 1)
-    toc_items = [
-        "1 Version History",
-        "2 File Details",
-        "3 Functional Process Flow Diagram",
-        "4 In Scope Requirements",
-        "   4.1 Functional Requirements",
-        "   4.2 Non-Functional Requirements",
-        "5 Out Of Scope Requirements",
-        "6 EPICS (Functional)",
-        "   6.1 EPIC 1 - DASHBOARD PAGE",
-        "   6.2 EPIC 2 - CHATBOT PAGE",
-        "7 EPICS (Non-Functional)",
-        "   7.1 EPIC 1 - APPLICATION ACCESSIBILITY",
-        "   7.2 EPIC 2 - EXCEPTION HANDLING",
-        "   7.3 EPIC 3 - APPLICATION MONITORING",
-        "8 REFERENCE DOCUMENTS"
+    
+    toc_data = [
+        ("1   Version History", "4", 1),
+        ("2   File Details", "4", 1),
+        ("3   Functional Process Flow Diagram", "4", 1),
+        ("4   In Scope Requirements", "5", 1),
+        ("4.1   Functional Requirements", "5", 2),
+        ("4.1.1   3 document types", "5", 3),
+        ("4.1.2   Canned Questions", "5", 3),
+        ("4.1.3   Ability to ask ad-hoc questions", "5", 3),
+        ("4.1.4   Download Q&A in CSV format", "5", 3),
+        ("4.1.5   Reference Source doc page numbers in response (accuracy in-line with POC)", "5", 3),
+        ("4.1.6   Accuracy of the answers (canned & ad-hoc) in-line with the POC", "5", 3),
+        ("4.1.7   Support only desktop browsers - Edge & Chrome (latest and latest-1 versions)", "5", 3),
+        ("4.2   Non - Functional Requirements", "5", 2),
+        ("4.2.1   Integration with Lockton AD (Group based authentication)", "5", 3),
+        ("4.2.2   Performance in-line with POC", "5", 3),
+        ("4.2.3   Auditing, logging, and error handling will be enhanced to support the system", "5", 3),
+        ("4.2.4   For monitoring Lockton can hook the logs into existing monitoring system", "5", 3),
+        ("4.2.5   Application will be accessible to Lockton employee users within Lockton env. only", "5", 3),
+        ("4.2.6   Only PDF documents (<5MB) will be supported", "5", 3),
+        ("5   Out Of Scope Requirements", "5", 1),
+        ("5.1.1   New document types such as Cyber policies", "5", 2),
+        ("5.1.2   New canned questions including prompt tuning for existing questions", "5", 2),
+        ("5.1.3   Admin interface (configuration to be done manually via config files/ DB)", "5", 2),
+        ("5.1.4   Multi-region provisioning of LLM (Azure Open AI), including DR", "5", 2),
+        ("5.1.5   Performance, Security & Automation testing", "5", 2),
+        ("5.1.6   Support for mobile devices", "5", 2),
+        ("5.1.7   Availability (to be handled in subsequent phases)", "5", 2),
+        ("5.1.8   Provisioning /configuration of CI/ CD Pipeline", "5", 2),
+        ("5.1.9   Workflow solution include Document based Authorization", "5", 2),
+        ("6   EPICS (Functional)", "6", 1),
+        ("6.1   EPIC 1 - DASHBOARD PAGE", "6", 2),
+        ("6.1.1   FEATURE 1: DEAL SUMMARY", "6", 3),
+        ("6.1.2   FEATURE 2: DEAL DETAILS", "9", 3),
+        ("6.1.3   FEATURE 3: CREATE NEW DEAL", "13", 3),
+        ("6.1.4   FEATURE 4: DOCUMENT SUMMARY", "17", 3),
+        ("6.2   EPIC 2 - CHATBOT PAGE", "21", 2),
+        ("6.2.1   FEATURE 1: CHATBOT FEATURES", "21", 3),
+        ("6.2.2   FEATURE 2: QUESTION TAGS TAB", "22", 3),
+        ("6.2.3   FEATURE 3: ALL FAQS TAB", "24", 3),
+        ("6.2.4   FEATURE 4: CHAT BOX", "24", 3),
+        ("6.2.5   FEATURE 5: CHAT ACCESS OPTIONS", "24", 3),
+        ("7   EPICS (Non-Functional)", "26", 1),
+        ("7.1   EPIC 1 - APPLICATION ACCESSIBILITY", "26", 2),
+        ("7.1.1   FEATURE 1: APPLICATION BROWSER", "26", 3),
+        ("7.1.2   FEATURE 2: APPLICATION LOGIN", "26", 3),
+        ("7.1.3   FEATURE 3: APPLICATION SECURITY", "26", 3),
+        ("7.2   EPIC 2 - EXCEPTION HANDLING", "27", 2),
+        ("7.2.1   FEATURE 1: DOCUMENT UPLOAD", "27", 3),
+        ("7.2.2   FEATURE 2: DOCUMENT PROCESSING", "27", 3),
+        ("7.2.3   FEATURE 3: QUERY RESPONSE TIMING", "28", 3),
+        ("7.3   EPIC 3 - APPLICATION MONITORING", "28", 2),
+        ("7.3.1   FEATURE 1: AUDITING", "28", 3),
+        ("7.3.2   FEATURE 2: LOGGING", "28", 3),
+        ("7.3.3   FEATURE 3: MONITORING", "29", 3),
+        ("8   USER STORIES ALIGNMENT WITH POC", "29", 1),
+        ("9   REFERENCE DOCUMENTS", "30", 1)
     ]
-    for item in toc_items:
-        p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(1)
-        p.paragraph_format.space_after = Pt(1)
-        run = p.add_run(item)
-        run.font.name = 'Calibri'
-        run.font.size = Pt(9.5)
-        run.font.color.rgb = PRIMARY_COLOR if not item.startswith("   ") else SECONDARY_COLOR
+    
+    for item_title, item_page, item_level in toc_data:
+        add_toc_entry(doc, item_title, item_page, item_level, right_margin=6.8)
         
     doc.add_page_break()
     

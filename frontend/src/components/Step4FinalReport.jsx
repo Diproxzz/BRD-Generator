@@ -303,6 +303,65 @@ export default function Step4FinalReport({
     ["ARCHITECTURE SPECIFICATION", "Target_State_Architecture_v2.pdf"]
   ];
 
+  const tocItems = [
+    { title: "1   Version History", page: "4", level: 1 },
+    { title: "2   File Details", page: "4", level: 1 },
+    { title: "3   Functional Process Flow Diagram", page: "4", level: 1 },
+    { title: "4   In Scope Requirements", page: "5", level: 1 },
+    { title: "4.1   Functional Requirements", page: "5", level: 2 },
+    { title: "4.1.1   3 document types", page: "5", level: 3 },
+    { title: "4.1.2   Canned Questions", page: "5", level: 3 },
+    { title: "4.1.3   Ability to ask ad-hoc questions", page: "5", level: 3 },
+    { title: "4.1.4   Download Q&A in CSV format", page: "5", level: 3 },
+    { title: "4.1.5   Reference Source doc page numbers in response", page: "5", level: 3 },
+    { title: "4.1.6   Accuracy of the answers in-line with POC", page: "5", level: 3 },
+    { title: "4.1.7   Support only desktop browsers - Edge & Chrome", page: "5", level: 3 },
+    { title: "4.2   Non - Functional Requirements", page: "5", level: 2 },
+    { title: "4.2.1   Integration with Lockton AD (Group based authentication)", page: "5", level: 3 },
+    { title: "4.2.2   Performance in-line with POC", page: "5", level: 3 },
+    { title: "4.2.3   Auditing, logging, and error handling", page: "5", level: 3 },
+    { title: "4.2.4   Hook logs into existing monitoring system", page: "5", level: 3 },
+    { title: "4.2.5   Application accessible within enterprise env. only", page: "5", level: 3 },
+    { title: "4.2.6   Only PDF documents (<5MB) supported", page: "5", level: 3 },
+    { title: "5   Out Of Scope Requirements", page: "5", level: 1 },
+    { title: "5.1.1   New document types such as Cyber policies", page: "5", level: 2 },
+    { title: "5.1.2   New canned questions including prompt tuning", page: "5", level: 2 },
+    { title: "5.1.3   Admin interface (configuration via DB)", page: "5", level: 2 },
+    { title: "5.1.4   Multi-region provisioning of LLM (Azure OpenAI)", page: "5", level: 2 },
+    { title: "5.1.5   Performance, Security & Automation testing", page: "5", level: 2 },
+    { title: "5.1.6   Support for mobile devices", page: "5", level: 2 },
+    { title: "5.1.7   Availability (handled in subsequent phases)", page: "5", level: 2 },
+    { title: "5.1.8   Provisioning / configuration of CI/CD Pipeline", page: "5", level: 2 },
+    { title: "5.1.9   Workflow solution include Document based Auth", page: "5", level: 2 },
+    { title: "6   EPICS (Functional)", page: "6", level: 1 },
+    { title: "6.1   EPIC 1 - DASHBOARD PAGE", page: "6", level: 2 },
+    { title: "6.1.1   FEATURE 1: DEAL SUMMARY", page: "6", level: 3 },
+    { title: "6.1.2   FEATURE 2: DEAL DETAILS", page: "9", level: 3 },
+    { title: "6.1.3   FEATURE 3: CREATE NEW DEAL", page: "13", level: 3 },
+    { title: "6.1.4   FEATURE 4: DOCUMENT SUMMARY", page: "17", level: 3 },
+    { title: "6.2   EPIC 2 - CHATBOT PAGE", page: "21", level: 2 },
+    { title: "6.2.1   FEATURE 1: CHATBOT FEATURES", page: "21", level: 3 },
+    { title: "6.2.2   FEATURE 2: QUESTION TAGS TAB", page: "22", level: 3 },
+    { title: "6.2.3   FEATURE 3: ALL FAQS TAB", page: "24", level: 3 },
+    { title: "6.2.4   FEATURE 4: CHAT BOX", page: "24", level: 3 },
+    { title: "6.2.5   FEATURE 5: CHAT ACCESS OPTIONS", page: "24", level: 3 },
+    { title: "7   EPICS (Non-Functional)", page: "26", level: 1 },
+    { title: "7.1   EPIC 1 - APPLICATION ACCESSIBILITY", page: "26", level: 2 },
+    { title: "7.1.1   FEATURE 1: APPLICATION BROWSER", page: "26", level: 3 },
+    { title: "7.1.2   FEATURE 2: APPLICATION LOGIN", page: "26", level: 3 },
+    { title: "7.1.3   FEATURE 3: APPLICATION SECURITY", page: "26", level: 3 },
+    { title: "7.2   EPIC 2 - EXCEPTION HANDLING", page: "27", level: 2 },
+    { title: "7.2.1   FEATURE 1: DOCUMENT UPLOAD", page: "27", level: 3 },
+    { title: "7.2.2   FEATURE 2: DOCUMENT PROCESSING", page: "27", level: 3 },
+    { title: "7.2.3   FEATURE 3: QUERY RESPONSE TIMING", page: "28", level: 3 },
+    { title: "7.3   EPIC 3 - APPLICATION MONITORING", page: "28", level: 2 },
+    { title: "7.3.1   FEATURE 1: AUDITING", page: "28", level: 3 },
+    { title: "7.3.2   FEATURE 2: LOGGING", page: "28", level: 3 },
+    { title: "7.3.3   FEATURE 3: MONITORING", page: "29", level: 3 },
+    { title: "8   USER STORIES ALIGNMENT WITH POC", page: "29", level: 1 },
+    { title: "9   REFERENCE DOCUMENTS", page: "30", level: 1 }
+  ];
+
   return (
     <div className="mx-6 my-4">
       {/* Top Action Bar */}
@@ -397,6 +456,36 @@ export default function Step4FinalReport({
             <div><span className="font-semibold text-gray-800">Status:</span> Updated Requirements, Features & User Stories</div>
           </div>
         </div>
+
+        {/* TABLE OF CONTENTS (Content Page matching PDF Pages 1 & 2) */}
+        <section className="bg-[#FAFBFD] border border-blue-100 rounded-xl p-6 shadow-sm">
+          <div className="flex items-center justify-between border-b-2 border-[#0A2A5C] pb-2 mb-4">
+            <h2 className="text-lg font-bold text-[#0A2A5C] tracking-tight">
+              Table of Contents
+            </h2>
+            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-[#0072CE] border border-blue-200">
+              Content Page • Strict Corporate Standard
+            </span>
+          </div>
+          <div className="space-y-1.5 font-sans">
+            {tocItems.map((item, idx) => (
+              <div
+                key={idx}
+                className={`flex items-baseline text-xs ${
+                  item.level === 1
+                    ? 'font-bold text-[#0A2A5C] pt-2'
+                    : item.level === 2
+                    ? 'font-medium text-[#1E3A8A] pl-5'
+                    : 'text-gray-700 pl-10'
+                }`}
+              >
+                <span className="shrink-0">{item.title}</span>
+                <span className="flex-1 mx-2 border-b border-dotted border-gray-400 select-none min-w-[20px]" />
+                <span className="shrink-0 font-mono text-gray-600 font-semibold">{item.page}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* 1. VERSION HISTORY */}
         <section>
