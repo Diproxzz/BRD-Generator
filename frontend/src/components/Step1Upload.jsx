@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { UploadCloud, FileText, X, Bot, Lightbulb, FileSpreadsheet, FileCode, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
+import { UploadCloud, FileText, X, Bot, Lightbulb, FileSpreadsheet, FileCode, CheckCircle2, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 
 export default function Step1Upload({ 
   files = [], 
@@ -15,16 +15,19 @@ export default function Step1Upload({
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       onUploadFiles(Array.from(e.dataTransfer.files));
@@ -33,7 +36,19 @@ export default function Step1Upload({
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      onUploadFiles(Array.from(e.target.files));
+      const selected = Array.from(e.target.files);
+      onUploadFiles(selected);
+    }
+    // Always clear value so selecting the same files again triggers onChange
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleZoneClick = (e) => {
+    // If click was directly on input, don't re-trigger
+    if (e.target.tagName !== 'INPUT') {
+      fileInputRef.current?.click();
     }
   };
 
@@ -45,15 +60,15 @@ export default function Step1Upload({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
-  const getFileIcon = (fileName) => {
+  const getFileIcon = (fileName = "") => {
     const ext = fileName.split('.').pop()?.toLowerCase();
     if (['xlsx', 'xls', 'csv'].includes(ext)) {
-      return <FileSpreadsheet className="w-4 h-4 text-emerald-600" />;
+      return <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />;
     }
-    if (['png', 'jpg', 'jpeg'].includes(ext)) {
-      return <FileCode className="w-4 h-4 text-purple-600" />;
+    if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+      return <FileCode className="w-4 h-4 text-purple-600 shrink-0" />;
     }
-    return <FileText className="w-4 h-4 text-blue-600" />;
+    return <FileText className="w-4 h-4 text-blue-600 shrink-0" />;
   };
 
   return (
@@ -84,33 +99,33 @@ export default function Step1Upload({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl py-16 px-6 flex flex-col items-center justify-center transition-all cursor-pointer ${
+          onClick={handleZoneClick}
+          className={`border-2 border-dashed rounded-xl py-16 px-6 flex flex-col items-center justify-center transition-all cursor-pointer select-none ${
             isDragging
-              ? 'border-[#E65100] bg-[#E65100]/5 scale-[0.99]'
-              : 'border-gray-400/60 hover:border-gray-500 bg-transparent'
+              ? 'border-[#E65100] bg-[#E65100]/10 scale-[0.99]'
+              : 'border-gray-400/60 hover:border-gray-500 hover:bg-white/40 bg-transparent'
           }`}
         >
           <input
             ref={fileInputRef}
             type="file"
             multiple
-            accept=".docx,.pdf,.xlsx,.xls,.csv,.txt,.md,.png,.jpg,.jpeg"
+            accept=".docx,.pdf,.xlsx,.xls,.csv,.txt,.md,.png,.jpg,.jpeg,.json"
             onChange={handleFileChange}
             className="hidden"
           />
 
-          <div className="w-12 h-12 rounded-full bg-transparent flex items-center justify-center text-gray-500 mb-3">
+          <div className="w-12 h-12 rounded-full bg-transparent flex items-center justify-center text-gray-500 mb-3 pointer-events-none">
             <UploadCloud className="w-8 h-8 stroke-[1.5]" />
           </div>
 
-          <p className="text-xs text-gray-700 font-medium">
+          <p className="text-xs text-gray-700 font-medium pointer-events-none">
             Drag & drop files here, or{' '}
-            <span className="text-[#E65100] font-semibold hover:underline">
+            <span className="text-[#E65100] font-semibold underline">
               browse
             </span>
           </p>
-          <p className="text-[11px] text-gray-500 mt-1">
+          <p className="text-[11px] text-gray-500 mt-1 pointer-events-none">
             Accepts .docx, .pdf, .xlsx, .csv, .txt, .png, .jpg (Multi-file enabled)
           </p>
         </div>
@@ -129,7 +144,7 @@ export default function Step1Upload({
             className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-orange-100/70 hover:bg-orange-100 text-[#E65100] border border-orange-200 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-            <span>Load Sample Project (Payment Pipeline)</span>
+            <span>Load Sample Project (Payment & Copilot BRD)</span>
           </button>
         </div>
 
@@ -145,7 +160,7 @@ export default function Step1Upload({
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-48 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
               {files.map((file) => (
                 <div
                   key={file.id || file.name}
@@ -157,7 +172,7 @@ export default function Step1Upload({
                       <p className="text-xs font-medium text-gray-800 truncate" title={file.name}>
                         {file.name}
                       </p>
-                      <p className="text-[10px] text-gray-600">
+                      <p className="text-[10px] text-gray-500">
                         {formatFileSize(file.size)}
                       </p>
                     </div>
@@ -167,7 +182,7 @@ export default function Step1Upload({
                       e.stopPropagation();
                       onDeleteFile(file.id);
                     }}
-                    className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors"
+                    className="text-gray-400 hover:text-red-500 p-1 rounded transition-colors cursor-pointer"
                     title="Remove file"
                   >
                     <X className="w-3.5 h-3.5" />

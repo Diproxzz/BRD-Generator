@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Download, Edit3, Save, RefreshCw, CheckCircle2, FileText, 
-  ExternalLink, Layers, ShieldCheck, AlertTriangle, ArrowLeft, Loader2 
+  Layers, ShieldCheck, ArrowLeft, Loader2, Image as ImageIcon, Check 
 } from 'lucide-react';
 
 export default function Step4FinalReport({ 
@@ -15,7 +15,7 @@ export default function Step4FinalReport({
   const [data, setData] = useState(brdData || {});
   const [isEditing, setIsEditing] = useState(false);
   const [regenModalOpen, setRegenModalOpen] = useState(false);
-  const [selectedSectionKey, setSelectedSectionKey] = useState("project_overview");
+  const [selectedSectionKey, setSelectedSectionKey] = useState("deliverables");
   const [customInstruction, setCustomInstruction] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -34,16 +34,274 @@ export default function Step4FinalReport({
     await onRegenerateSection(selectedSectionKey, customInstruction);
   };
 
-  // Safe table data helpers
-  const sponsors = data?.sponsors || [];
-  const contributors = data?.contributors || [];
-  const inScope = data?.in_scope || [];
-  const outOfScope = data?.out_of_scope || [];
-  const acronyms = data?.acronyms || [];
-  const existingProc = data?.existing_processes || {};
-  const deliverables = data?.deliverables || [];
-  const signOff = data?.sign_off || [];
-  const appendix = data?.appendix || {};
+  const versionHistory = data?.version_history || [
+    ["0.1", data?.author || "Smriti Srivastava", "Updated Requirements, Features and User Stories"]
+  ];
+
+  const fileDetails = data?.file_details || [
+    [`${(data?.project_name || 'Project').replace(/\s+/g, '_')}_BRD`, "Docx", "Requirements Vault"]
+  ];
+
+  const flowSteps = data?.process_flow_steps || [
+    "1. The Business Analyst / TAP analyst navigates to the application on supported desktop browser (Edge / Chrome).",
+    "2. On the home page, the user selects an existing project/deal folder or creates a new deal.",
+    "3. User selects document type from the local drive and uploads source documents.",
+    "4. The documents are uploaded to secure storage vault and queued for automated processing.",
+    "5. The backend pipeline processes document text, schema validation, and vector embeddings.",
+    "6. The system notifies the user via status indicator / email once document processing is complete.",
+    "7. The user navigates to the interactive workspace to query records or execute ad-hoc validation.",
+    "8. The user exports structured reports and generated requirements to CSV or styled .docx format."
+  ];
+
+  const inScopeFunc = data?.in_scope_functional || [
+    { id: "4.1.1", title: "Multi-document type ingestion support", sub: ["a. ESA", "b. Contract & Leases", "c. CIM"] },
+    { id: "4.1.2", title: "Pre-configured Analytical Question Sets (Canned Prompts)", sub: ["a. ESA (10)", "b. Contract & Leases (5)", "c. CIM (16)"] },
+    { id: "4.1.3", title: "Ability to ask ad-hoc questions", sub: [] },
+    { id: "4.1.4", title: "Download Q&A in CSV format", sub: [] },
+    { id: "4.1.5", title: "Reference Source doc page numbers in response (accuracy in-line with POC)", sub: [] },
+    { id: "4.1.6", title: "Accuracy of the answers (canned & ad-hoc) in-line with the POC", sub: [] },
+    { id: "4.1.7", title: "Support only desktop browsers — Edge & Chrome (latest and latest-1 versions)", sub: [] }
+  ];
+
+  const inScopeNFR = data?.in_scope_nfr || [
+    { id: "4.2.1", text: "Integration with Enterprise AD (Group based authentication)." },
+    { id: "4.2.2", text: "Performance in-line with POC:\n  a. Doc Processing — 60 to 90 seconds (for 1 doc) based on doc complexity and length.\n  b. Answer — Up to 60 secs based on the complexity & length of the answer." },
+    { id: "4.2.3", text: "Auditing, logging, and error handling will be enhanced to support the system." },
+    { id: "4.2.4", text: "For monitoring Lockton can hook the logs into existing monitoring system." },
+    { id: "4.2.5", text: "Application will be accessible to authorized corporate employee users within enterprise network only." },
+    { id: "4.2.6", text: "Only allowed documents (<25MB) will be supported." }
+  ];
+
+  const outOfScope = data?.out_of_scope || [
+    "5.1.1  New document types such as Cyber policies.",
+    "5.1.2  New canned questions including prompt tuning for existing questions.",
+    "5.1.3  Admin interface (configuration to be done manually via config files/DB).",
+    "5.1.4  Multi-region provisioning of LLM (Azure OpenAI), including DR.",
+    "5.1.5  Performance, Security & Automation testing in production.",
+    "5.1.6  Support for mobile devices.",
+    "5.1.7  Availability (to be handled in subsequent phases).",
+    "5.1.8  Provisioning / configuration of CI/CD Pipeline.",
+    "5.1.9  Workflow solution include Document based Authorization."
+  ];
+
+  const functionalEpics = data?.functional_epics || [
+    {
+      epic_id: "6.1",
+      epic_title: "EPIC 1 - DASHBOARD PAGE",
+      features: [
+        {
+          feature_id: "6.1.1",
+          feature_title: "FEATURE 1: DEAL SUMMARY",
+          user_stories: [
+            {
+              id: "6.1.1.1",
+              title: "User Story 1: Ability to land on the Dashboard Page",
+              description: "As a TAP analyst, I should be able to land on the Dashboard Page, so that I can view and select the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that application redirects the user to the Dashboard Page after login."
+              ],
+              screenshot_ref: "[Reference Screenshot: Dashboard Navigation and Landing Page]"
+            },
+            {
+              id: "6.1.1.2",
+              title: "User Story 2: Ability to view all features on Dashboard Page",
+              description: "As a TAP analyst, I should be able to view all features on the Dashboard Page, so that I can view and select the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that application enables view of all features on the Dashboard Page as:",
+                "   a. Deal Summary Table (Deal ID, Deal Name, Deal Generated By, Priority, Creation Time Stamp, Document Summary)",
+                "   b. Search Bar",
+                "   c. Refresh Button",
+                "   d. Create New Deal Button",
+                "   e. Pagination"
+              ],
+              screenshot_ref: "[Reference Screenshot: Deal Summary Table with Priority, Timestamp and Action Buttons]"
+            },
+            {
+              id: "6.1.1.3",
+              title: "User Story 3: Ability to filter from the Deal Summary table",
+              description: "As a TAP analyst, I should be able to filter from the Deal Summary table, so that I can view and select the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that application provides the ability to type the keyword based on search in the search bar.",
+                "ii. Verify that the application provides the ability to search and filter from any of the Dashboard Page columns basis the keyword entered in the search bar."
+              ],
+              screenshot_ref: "[Reference Screenshot: Keyword Search & Filter Controls]"
+            },
+            {
+              id: "6.1.1.4",
+              title: "User Story 4: Ability to refresh the Deal Summary table",
+              description: "As a TAP analyst, I should be able to refresh data in the Deal Summary table, so that I can view and select the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that application provides the ability to refresh entries with data of deal entries created in the Deal Summary table.",
+                "ii. Verify that application provides the ability to refresh entries with data of deal entries updated in the Deal Summary table."
+              ],
+              screenshot_ref: "[Reference Screenshot: Refresh Button & Active Spin State]"
+            },
+            {
+              id: "6.1.1.5",
+              title: "User Story 5: Ability to create new deal",
+              description: "As a TAP analyst, I should be able to view and click on the 'Create New Deal' in the Deal Summary table, so that I can enter the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that application provides the ability to view and click on the 'Create New Deal' button in the Deal Summary table.",
+                "ii. Verify that application provides the ability to display a pop-up window on the click of 'Create New Deal' button, for entering the required information for creating a new deal."
+              ],
+              screenshot_ref: "[Reference Screenshot: Create New Deal Modal Dialog]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      epic_id: "6.2",
+      epic_title: "EPIC 2 - CHATBOT PAGE",
+      features: [
+        {
+          feature_id: "6.2.1",
+          feature_title: "FEATURE 1: CHATBOT FEATURES",
+          user_stories: [
+            {
+              id: "6.2.1.1",
+              title: "User Story 1: Ability to view all features on Chatbot Page",
+              description: "As a TAP analyst, I should be able to view all features on the Chatbot Page, so that I can view and select the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that application enables view of all features on the Chatbot Page as:",
+                "   a. Chat box (Deal ID, Deal Name, Deal Generated By, Document Name, Document Type, Processing Status, Query Text box, Submit button)",
+                "   b. Back option",
+                "   c. Show History",
+                "   d. Clear Chat",
+                "   e. CSV Download",
+                "   f. End Conversation",
+                "   g. Question Tags",
+                "   h. All FAQs",
+                "ii. Verify that the application provides the ability to go back and initiate chat on a different document by clicking on the 'Back' option on the Chatbot page."
+              ],
+              screenshot_ref: "[Reference Screenshot: Chatbot Screen with Question Tags & Document Viewer]"
+            }
+          ]
+        },
+        {
+          feature_id: "6.2.2",
+          feature_title: "FEATURE 2: QUESTION TAGS TAB",
+          user_stories: [
+            {
+              id: "6.2.2.1",
+              title: "User Story 1: Ability to view and select question tags for document type",
+              description: "As a TAP analyst, I should be able to view and select question tags for ESA document type on the Chatbot Page, so that I can get the required information therein.",
+              acceptance_criteria: [
+                "i. Verify that the application provides the ability to display the question tags for document type in the left navigation bar on the Chatbot page.",
+                "ii. Verify that the question tags displayed in the left navigation bar on the Chatbot page are enabled for selection.",
+                "iii. Verify that the selection of any question tag sends a pre-defined question in the chat box in the right panel of the Chatbot page.",
+                "iv. Verify that the correct pre-defined question is displayed in the right panel for any selected question tag."
+              ],
+              screenshot_ref: "[Reference Screenshot: Question Tags Sidebar & Canned Prompt Matrix]"
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  const nfrEpics = data?.non_functional_epics || [
+    {
+      epic_id: "7.1",
+      epic_title: "EPIC 1 - APPLICATION ACCESSIBILITY",
+      features: [
+        {
+          title: "7.1.1 FEATURE 1: APPLICATION BROWSER",
+          story_title: "7.1.1.1 User Story 1: Ability to navigate to application in a desktop browser",
+          description: "User should be able to navigate to the application in a desktop browser.",
+          acceptance: [
+            "i. Verify that the application navigation is supported in the desktop browsers — Edge & Chrome in their latest and latest-1 version."
+          ]
+        },
+        {
+          title: "7.1.2 FEATURE 2: APPLICATION LOGIN",
+          story_title: "7.1.2.1 User Story 1: Ability to integrate with Enterprise Active Directory",
+          description: "Application should have the ability to authorize and authenticate user's login.",
+          acceptance: [
+            "i. Verify that application can integrate with Enterprise AD to validate group-based authentication through SSO login.",
+            "ii. Verify that the application provides the ability to display an appropriate popup message for incorrect login (Azure AD SSO implementation).",
+            "iii. Verify that the application redirects users to the SSO login page if not already authenticated.",
+            "iv. Verify that only authorized users with Analyst role/persona are logged into application.",
+            "v. Verify that users not with Analyst role/persona are unable to login ('Authentication failed for your login credentials.')."
+          ]
+        },
+        {
+          title: "7.1.3 FEATURE 3: APPLICATION SECURITY",
+          story_title: "7.1.3.1 User Story 1: Ability to make application accessible within corporate network only",
+          description: "Application should be accessible to enterprise employees within corporate environment only.",
+          acceptance: [
+            "i. Verify that the application provides the ability to be accessible to employees within environment only via network security rules implemented by cloud security team.",
+            "ii. Verify that the application provides the ability to assess that each API has a valid token.",
+            "iii. Verify that the application provides a mechanism to check token expiry."
+          ]
+        }
+      ]
+    },
+    {
+      epic_id: "7.2",
+      epic_title: "EPIC 2 - EXCEPTION HANDLING",
+      features: [
+        {
+          title: "7.2.1 FEATURE 1: DOCUMENT UPLOAD",
+          story_title: "7.2.1.1 User Story 1: Document upload restrictions and validations",
+          description: "Application should implement document upload restrictions and validations.",
+          acceptance: [
+            "i. Verify that any functionality broken in the application in any APIs and modules is handled through an exception handling mechanism, whereby error codes will be displayed with proper error messages to the front-end.",
+            "ii. Verify that the application provides the ability to not allow files for upload which are not in supported format and displays an error message: 'Only supported files can be selected for upload'.",
+            "iii. Verify that the application provides the ability to not allow files for upload which are >25MB in size and displays an error message: 'Only files <25MB can be selected for upload'.",
+            "iv. Verify that the application only allows upload of max five documents in single request.",
+            "v. Verify that files selected for upload should either be deleted or submitted for processing first."
+          ]
+        },
+        {
+          title: "7.2.2 FEATURE 2: DOCUMENT PROCESSING",
+          story_title: "7.2.2.1 User Story 1: Document processing restrictions and validations",
+          description: "Application should implement document processing restrictions and validations.",
+          acceptance: [
+            "i. Verify that any functionality broken in any APIs and modules is handled through exception handling with proper error messages.",
+            "ii. Verify that the application provides the ability to not take more than 90 secs for each file submitted for processing based on complexity and length of document."
+          ]
+        }
+      ]
+    },
+    {
+      epic_id: "7.3",
+      epic_title: "EPIC 3 - APPLICATION MONITORING",
+      features: [
+        {
+          title: "7.3.1 FEATURE 1: AUDITING",
+          story_title: "7.3.1.1 User Story 1: Audit logs for transactions",
+          description: "Application should have audit logs for all key transactions while there will not be any UI screens to view the same and can be only retrieved through DB query.",
+          acceptance: [
+            "i. Verify that the state changes are captured in MongoDB/SQL for Document Upload timestamp, Document Processed Timestamp, Document Review completion Timestamp, Document Review Completed By."
+          ]
+        },
+        {
+          title: "7.3.2 FEATURE 2: LOGGING",
+          story_title: "7.3.2.1 User Story 1: Application exception logging",
+          description: "Application should have the ability to implement exception logging.",
+          acceptance: [
+            "i. Verify that the application provides the ability to have an appropriate logging mechanism if the application fails.",
+            "ii. Verify that the application has logs in console in local or cloud monitoring service for debugging of the application."
+          ]
+        },
+        {
+          title: "7.3.3 FEATURE 3: MONITORING",
+          story_title: "7.3.3.1 User Story 1: Application monitoring",
+          description: "Application should have monitoring capability.",
+          acceptance: [
+            "i. Verify that the application provides health check probes and monitoring logs in centralized monitoring service."
+          ]
+        }
+      ]
+    }
+  ];
+
+  const refDocs = data?.reference_documents || [
+    ["PROJECT SOW PPT", "Lockton_Unleash the Power of Generative AI.pptx"],
+    ["CANNED QUESTIONS MATRIX", "Canned Questions.xlsx"],
+    ["ARCHITECTURE SPECIFICATION", "Target_State_Architecture_v2.pdf"]
+  ];
 
   return (
     <div className="mx-6 my-4">
@@ -52,7 +310,7 @@ export default function Step4FinalReport({
         <div className="flex items-center gap-2">
           <button
             onClick={onBackToWorkflow}
-            className="p-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 transition-colors"
+            className="p-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 transition-colors cursor-pointer"
             title="Back to Agent step"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -61,11 +319,11 @@ export default function Step4FinalReport({
             <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
               <span>{data?.project_name || "Business Requirements Document"}</span>
               <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
-                v{data?.version || "1.0"} Ready
+                v{data?.version || "0.1"} Corporate Ready
               </span>
             </h2>
             <p className="text-[11px] text-gray-500">
-              Generated following Corporate BRD Standard • Styled Word (.docx) ready
+              Corporate BRD Format (Epics, Features, User Stories & Acceptance Criteria) • Downloadable .docx ready
             </p>
           </div>
         </div>
@@ -75,7 +333,7 @@ export default function Step4FinalReport({
           {savedSuccess && (
             <span className="text-xs text-emerald-700 font-semibold flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              Document Saved
+              Saved
             </span>
           )}
 
@@ -86,7 +344,7 @@ export default function Step4FinalReport({
               className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
             >
               {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-              <span>Save & Recompile</span>
+              <span>Save Changes</span>
             </button>
           ) : (
             <button
@@ -117,418 +375,282 @@ export default function Step4FinalReport({
         </div>
       </div>
 
-      {/* Rendered Document View (Reproducing Section 6 Template Hierarchy) */}
+      {/* Rendered Document View (Matching PDF Template Hierarchy) */}
       <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-300/80 shadow-md max-w-5xl mx-auto space-y-8 text-gray-800 font-sans">
         
-        {/* COVER / TITLE BLOCK */}
-        <div className="border-b-2 border-[#1A365D] pb-8 pt-4">
-          <div className="text-xs font-bold uppercase tracking-widest text-[#3182CE] mb-2">
+        {/* Document Header & Title */}
+        <div className="border-b-2 border-[#0A2A5C] pb-6 pt-2">
+          <div className="flex justify-between items-start text-[11px] text-gray-500 font-medium mb-3">
+            <span>&lt;Function Name&gt; &lt;Sub Function Name&gt; &lt;Name of Process&gt;</span>
+            <span className="font-semibold text-[#0A2A5C]">Enterprise Business Solutions | LTIMindtree Format</span>
+          </div>
+          <h1 className="text-3xl font-extrabold text-[#0A2A5C] tracking-tight">
+            {data?.project_name || "Enterprise Copilot & Data Platform"}
+          </h1>
+          <div className="text-sm font-semibold text-[#0072CE] mt-1">
             Business Requirements Document (BRD)
           </div>
-          <h1 className="text-3xl font-extrabold text-[#1A365D] tracking-tight">
-            {data?.project_name || "Enterprise Data Pipeline"}
-          </h1>
           <div className="mt-4 flex flex-wrap gap-4 text-xs text-gray-600">
-            <div><span className="font-semibold text-gray-800">Version:</span> {data?.version || "1.0"}</div>
-            <div><span className="font-semibold text-gray-800">Date:</span> {data?.date || "2026-09-03"}</div>
+            <div><span className="font-semibold text-gray-800">Version:</span> {data?.version || "0.1"}</div>
+            <div><span className="font-semibold text-gray-800">Date:</span> {data?.date || "2026-09-06"}</div>
             <div><span className="font-semibold text-gray-800">Author:</span> {data?.author || "Lead Business Analyst"}</div>
-            <div><span className="font-semibold text-gray-800">Status:</span> Approved for Review</div>
+            <div><span className="font-semibold text-gray-800">Status:</span> Updated Requirements, Features & User Stories</div>
           </div>
         </div>
 
-        {/* 1. REVISION HISTORY */}
+        {/* 1. VERSION HISTORY */}
         <section>
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            1. Revision History
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse border border-gray-200">
-              <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                <tr>
-                  <th className="border border-gray-300 p-2">Version Number</th>
-                  <th className="border border-gray-300 p-2">Date</th>
-                  <th className="border border-gray-300 p-2">Author</th>
-                  <th className="border border-gray-300 p-2">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data?.revision_history?.map((rev, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2 font-mono font-medium">{rev[0]}</td>
-                    <td className="border border-gray-300 p-2">{rev[1]}</td>
-                    <td className="border border-gray-300 p-2">{rev[2]}</td>
-                    <td className="border border-gray-300 p-2">{rev[3]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* 2. PROJECT OVERVIEW */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            2. Project Overview
-          </h2>
-
-          {/* 2.1 Project Sponsors */}
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE] mb-2">2.1 Project Sponsor(s)</h3>
-            <table className="w-full text-xs text-left border-collapse border border-gray-200 max-w-2xl">
-              <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                <tr>
-                  <th className="border border-gray-300 p-2 w-1/2">Name</th>
-                  <th className="border border-gray-300 p-2 w-1/2">Job Title</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sponsors.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2 font-medium">
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={row[0]}
-                          onChange={(e) => {
-                            const newSponsors = [...sponsors];
-                            newSponsors[idx][0] = e.target.value;
-                            setData({ ...data, sponsors: newSponsors });
-                          }}
-                          className="w-full border rounded px-1.5 py-0.5"
-                        />
-                      ) : (
-                        <span className={row[0].includes("[NEEDS INPUT") ? "text-amber-600 font-semibold" : ""}>
-                          {row[0]}
-                        </span>
-                      )}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          value={row[1]}
-                          onChange={(e) => {
-                            const newSponsors = [...sponsors];
-                            newSponsors[idx][1] = e.target.value;
-                            setData({ ...data, sponsors: newSponsors });
-                          }}
-                          className="w-full border rounded px-1.5 py-0.5"
-                        />
-                      ) : (
-                        row[1]
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 2.2 Contributors */}
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE] mb-2">2.2 Project Contributors (A–Z)</h3>
-            <table className="w-full text-xs text-left border-collapse border border-gray-200">
-              <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                <tr>
-                  <th className="border border-gray-300 p-2">Name</th>
-                  <th className="border border-gray-300 p-2">Job Title</th>
-                  <th className="border border-gray-300 p-2">Role</th>
-                </tr>
-              </thead>
-              <tbody>
-                {contributors.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2 font-medium">{row[0]}</td>
-                    <td className="border border-gray-300 p-2">{row[1]}</td>
-                    <td className="border border-gray-300 p-2">{row[2]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 2.3 In Scope */}
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE] mb-2">2.3 In Scope (Deliverables)</h3>
-            <table className="w-full text-xs text-left border-collapse border border-gray-200">
-              <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                <tr>
-                  <th className="border border-gray-300 p-2">Title</th>
-                </tr>
-              </thead>
-              <tbody>
-                {inScope.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2">{Array.isArray(row) ? row[0] : row}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 2.4 Out of Scope */}
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE] mb-2">2.4 Out of Scope</h3>
-            <table className="w-full text-xs text-left border-collapse border border-gray-200">
-              <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                <tr>
-                  <th className="border border-gray-300 p-2 w-1/3">Title</th>
-                  <th className="border border-gray-300 p-2 w-2/3">Reason for Exclusion</th>
-                </tr>
-              </thead>
-              <tbody>
-                {outOfScope.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2 font-medium">{Array.isArray(row) ? row[0] : row}</td>
-                    <td className="border border-gray-300 p-2 text-gray-600">{Array.isArray(row) ? row[1] : ""}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* 3. ACRONYMS */}
-        <section>
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            3. Common Project Acronyms, Names, and Descriptions
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-3 flex items-center gap-2">
+            <span>1  Version History</span>
           </h2>
           <table className="w-full text-xs text-left border-collapse border border-gray-200">
-            <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
+            <thead className="bg-[#F0F4F8] text-[#0A2A5C] font-bold">
               <tr>
-                <th className="border border-gray-300 p-2 w-1/4">Name</th>
-                <th className="border border-gray-300 p-2 w-3/4">Description</th>
+                <th className="border border-gray-300 p-2 w-1/5">Version No.</th>
+                <th className="border border-gray-300 p-2 w-1/3">Updated By</th>
+                <th className="border border-gray-300 p-2">Updates</th>
               </tr>
             </thead>
             <tbody>
-              {acronyms.map((row, idx) => (
+              {versionHistory.map((rev, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2 font-mono font-bold text-[#1A365D]">{row[0]}</td>
-                  <td className="border border-gray-300 p-2 text-gray-700">{row[1]}</td>
+                  <td className="border border-gray-300 p-2 font-mono font-medium">{rev[0]}</td>
+                  <td className="border border-gray-300 p-2 font-medium">{rev[1]}</td>
+                  <td className="border border-gray-300 p-2">{rev[2]}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </section>
 
-        {/* 4. EXISTING PROCESSES */}
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            4. Existing Processes
+        {/* 2. FILE DETAILS */}
+        <section>
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-3">
+            2  File Details
           </h2>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">4.1 Summary Process Narrative</h3>
-            <p className="text-xs text-gray-700 mt-1 leading-relaxed">{existingProc?.summary}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">4.2 Timing</h3>
-            <p className="text-xs text-gray-700 mt-1">{existingProc?.timing}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">4.3 Volume</h3>
-            <p className="text-xs text-gray-700 mt-1">{existingProc?.volume}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">4.4 Screenshots</h3>
-            <p className="text-xs text-gray-700 mt-1">{existingProc?.screenshots}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">4.5 Problems</h3>
-            <p className="text-xs text-gray-700 mt-1 text-red-700 bg-red-50 p-2 rounded border border-red-100">
-              {existingProc?.problems}
-            </p>
+          <table className="w-full text-xs text-left border-collapse border border-gray-200">
+            <thead className="bg-[#F0F4F8] text-[#0A2A5C] font-bold">
+              <tr>
+                <th className="border border-gray-300 p-2 w-2/5">File Name</th>
+                <th className="border border-gray-300 p-2 w-1/5">File Format</th>
+                <th className="border border-gray-300 p-2 w-2/5">File Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fileDetails.map((f, idx) => (
+                <tr key={idx} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 p-2 font-mono">{f[0]}</td>
+                  <td className="border border-gray-300 p-2">{f[1]}</td>
+                  <td className="border border-gray-300 p-2 text-blue-600 underline cursor-pointer">{f[2]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        {/* 3. FUNCTIONAL PROCESS FLOW DIAGRAM */}
+        <section className="space-y-3">
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
+            3  Functional Process Flow Diagram
+          </h2>
+          <div className="bg-[#F8FAFC] border border-blue-200 rounded-xl p-4 space-y-2">
+            <h3 className="text-xs font-bold text-[#0072CE] uppercase tracking-wider">
+              MVP to Production | User Flow
+            </h3>
+            <div className="space-y-1.5 text-xs text-gray-700">
+              {flowSteps.map((step, idx) => (
+                <p key={idx} className="leading-relaxed">
+                  <span className="font-semibold text-[#0A2A5C]">{step.substring(0, 3)}</span>
+                  {step.substring(3)}
+                </p>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* 5. PROJECT REQUIREMENTS */}
-        <section className="space-y-6">
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            5. Project Requirements
+        {/* 4. IN SCOPE REQUIREMENTS */}
+        <section className="space-y-4">
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
+            4  In Scope Requirements
           </h2>
 
-          {deliverables.map((deliv, dIdx) => (
-            <div key={dIdx} className="space-y-4 border-l-2 border-[#3182CE] pl-4">
-              <h3 className="text-base font-bold text-[#1A365D]">
-                5.{dIdx + 1} {deliv.title}
+          {/* 4.1 Functional Requirements */}
+          <div>
+            <h3 className="text-sm font-bold text-[#0072CE] mb-2">4.1 Functional Requirements</h3>
+            <div className="space-y-2 text-xs">
+              {inScopeFunc.map((req, idx) => (
+                <div key={idx} className="space-y-1">
+                  <p className="font-semibold text-gray-900">
+                    <span className="text-[#0A2A5C] font-mono mr-1.5">{req.id}</span>
+                    {req.title}
+                  </p>
+                  {req.sub && req.sub.length > 0 && (
+                    <div className="pl-6 space-y-0.5 text-gray-600">
+                      {req.sub.map((s, sIdx) => (
+                        <p key={sIdx}>{s}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 4.2 Non-Functional Requirements */}
+          <div>
+            <h3 className="text-sm font-bold text-[#0072CE] mb-2">4.2 Non-Functional Requirements</h3>
+            <div className="space-y-2 text-xs">
+              {inScopeNFR.map((nfr, idx) => (
+                <div key={idx}>
+                  <p className="text-gray-800 whitespace-pre-line">
+                    <span className="text-[#0A2A5C] font-mono font-semibold mr-1.5">{nfr.id}</span>
+                    {nfr.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 5. OUT OF SCOPE REQUIREMENTS */}
+        <section>
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
+            5  Out Of Scope Requirements
+          </h2>
+          <div className="space-y-1 text-xs text-gray-700">
+            {outOfScope.map((item, idx) => (
+              <p key={idx} className="leading-relaxed">
+                <span className="text-red-500 mr-1.5 font-bold">✕</span>
+                {item}
+              </p>
+            ))}
+          </div>
+        </section>
+
+        {/* 6. EPICS (FUNCTIONAL) */}
+        <section className="space-y-6">
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
+            6  EPICS (Functional)
+          </h2>
+
+          {functionalEpics.map((epic, eIdx) => (
+            <div key={eIdx} className="space-y-4">
+              <h3 className="text-sm font-bold text-[#0A2A5C] uppercase tracking-wide bg-blue-50/60 p-2 rounded border border-blue-100">
+                {epic.epic_id} {epic.epic_title}
               </h3>
 
-              {/* 5.x.1 Process Overview */}
-              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-lg border border-gray-200">
-                <h4 className="text-xs font-bold text-[#3182CE]">5.{dIdx + 1}.1 Process Overview</h4>
-                <div className="text-xs text-gray-700 space-y-1">
-                  <p><span className="font-semibold text-gray-900">• Summary:</span> {deliv.process_overview?.summary}</p>
-                  <p><span className="font-semibold text-gray-900">• Flow Diagram:</span> <span className="font-mono bg-white px-1.5 py-0.5 rounded border border-gray-200 text-[11px]">{deliv.process_overview?.flow_diagram}</span></p>
-                  <p><span className="font-semibold text-gray-900">• Trigger & Pre-Conditions:</span> {deliv.process_overview?.trigger}</p>
-                  <p><span className="font-semibold text-gray-900">• Timing:</span> {deliv.process_overview?.timing}</p>
-                  <p><span className="font-semibold text-gray-900">• Volume:</span> {deliv.process_overview?.volume}</p>
-                  <p><span className="font-semibold text-gray-900">• Post-Conditions & Outcomes:</span> {deliv.process_overview?.outcomes}</p>
-                </div>
-              </div>
+              {epic.features?.map((feat, fIdx) => (
+                <div key={fIdx} className="pl-3 space-y-3 border-l-2 border-[#0072CE]">
+                  <h4 className="text-xs font-bold text-[#0072CE] uppercase">
+                    {feat.feature_id} {feat.feature_title}
+                  </h4>
 
-              {/* 5.x.2 Functional Requirements (PREQ/CREQ/GCREQ) */}
-              <div>
-                <h4 className="text-xs font-bold text-[#3182CE] mb-2">
-                  5.{dIdx + 1}.2 Functional Requirements (PREQ / CREQ / GCREQ)
-                </h4>
-                <div className="space-y-1.5">
-                  {deliv.functional_requirements?.map((req, rIdx) => {
-                    const isParent = req.level === "PREQ";
-                    const isChild = req.level === "CREQ";
-                    const isGrandchild = req.level === "GCREQ";
-
-                    return (
-                      <div 
-                        key={rIdx} 
-                        className={`text-xs flex items-start gap-2 ${
-                          isParent ? 'font-semibold text-gray-900 pl-0' :
-                          isChild ? 'text-gray-800 pl-4' : 'text-gray-700 pl-8'
-                        }`}
-                      >
-                        <span className="font-mono text-[11px] text-[#1A365D] shrink-0 bg-gray-100 px-1.5 py-0.5 rounded">
-                          {req.id}
+                  {feat.user_stories?.map((story, sIdx) => (
+                    <div key={sIdx} className="bg-gray-50/70 p-3.5 rounded-xl border border-gray-200/90 space-y-2 text-xs">
+                      <h5 className="font-bold text-gray-900 flex items-center gap-1.5">
+                        <span className="font-mono text-[11px] text-[#0A2A5C] bg-white px-1.5 py-0.5 rounded border border-gray-200">
+                          {story.id}
                         </span>
-                        <span className="pt-0.5">{req.text}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                        <span>{story.title}</span>
+                      </h5>
 
-              {/* 5.x.3 Non-Functional Requirements */}
-              <div>
-                <h4 className="text-xs font-bold text-[#3182CE] mb-2">
-                  5.{dIdx + 1}.3 Non-Functional Requirements
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {deliv.non_functional_requirements && Object.entries(deliv.non_functional_requirements).map(([key, val], nIdx) => (
-                    <div key={nIdx} className="bg-white p-2.5 rounded border border-gray-200">
-                      <span className="font-bold text-[#1A365D] block mb-0.5">{key}:</span>
-                      <span className="text-gray-600 text-[11px]">{val}</span>
+                      {/* Description */}
+                      <div className="pl-2">
+                        <span className="font-semibold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                          {story.id}.1 Description
+                        </span>
+                        <p className="text-gray-700 italic leading-relaxed">
+                          "{story.description}"
+                        </p>
+                      </div>
+
+                      {/* Acceptance Criteria */}
+                      <div className="pl-2 pt-1">
+                        <span className="font-semibold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                          {story.id}.2 Acceptance Criteria
+                        </span>
+                        <div className="space-y-1 text-gray-800">
+                          {story.acceptance_criteria?.map((ac, acIdx) => (
+                            <p key={acIdx} className="whitespace-pre-line pl-2">
+                              {ac}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Reference Screenshot Callout */}
+                      {story.screenshot_ref && (
+                        <div className="mt-2 bg-white border border-blue-200 rounded-lg p-2.5 flex items-center gap-2 text-xs text-[#0072CE]">
+                          <ImageIcon className="w-4 h-4 shrink-0 text-blue-500" />
+                          <span className="font-medium text-[11px]">{story.screenshot_ref}</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* 5.x.4 Data Requirements Table */}
-              {deliv.data_requirements && deliv.data_requirements.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-bold text-[#3182CE] mb-2">
-                    5.{dIdx + 1}.4 Data Requirements
-                  </h4>
-                  <table className="w-full text-xs text-left border-collapse border border-gray-200">
-                    <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                      <tr>
-                        <th className="border border-gray-300 p-2">Data Field Name</th>
-                        <th className="border border-gray-300 p-2">Description</th>
-                        <th className="border border-gray-300 p-2">Editable</th>
-                        <th className="border border-gray-300 p-2">Mandatory</th>
-                        <th className="border border-gray-300 p-2">Predefined Value(s)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {deliv.data_requirements.map((row, rowIdx) => (
-                        <tr key={rowIdx} className="hover:bg-gray-50">
-                          <td className="border border-gray-300 p-2 font-mono font-medium">{row[0]}</td>
-                          <td className="border border-gray-300 p-2">{row[1]}</td>
-                          <td className="border border-gray-300 p-2 text-center">{row[2]}</td>
-                          <td className="border border-gray-300 p-2 text-center">{row[3]}</td>
-                          <td className="border border-gray-300 p-2 font-mono text-[11px]">{row[4]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* Risks and Assumptions */}
-              {deliv.risks_and_assumptions && deliv.risks_and_assumptions.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-bold text-[#3182CE] mb-2">
-                    5.{dIdx + 1}.5 Known Issues, Assumptions, Risks & Dependencies
-                  </h4>
-                  <table className="w-full text-xs text-left border-collapse border border-gray-200">
-                    <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                      <tr>
-                        <th className="border border-gray-300 p-2 w-1/4">Type</th>
-                        <th className="border border-gray-300 p-2 w-3/4">Description</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {deliv.risks_and_assumptions.map((row, rIdx) => (
-                        <tr key={rIdx} className="hover:bg-gray-50">
-                          <td className="border border-gray-300 p-2 font-bold text-gray-800">{row[0]}</td>
-                          <td className="border border-gray-300 p-2 text-gray-600">{row[1]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              ))}
             </div>
           ))}
         </section>
 
-        {/* 6. SIGN OFF */}
+        {/* 7. EPICS (NON-FUNCTIONAL) */}
+        <section className="space-y-6">
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
+            7  EPICS (Non-Functional)
+          </h2>
+
+          {nfrEpics.map((epic, eIdx) => (
+            <div key={eIdx} className="space-y-3">
+              <h3 className="text-sm font-bold text-[#0A2A5C] uppercase tracking-wide bg-blue-50/60 p-2 rounded border border-blue-100">
+                {epic.epic_id} {epic.epic_title}
+              </h3>
+
+              {epic.features?.map((feat, fIdx) => (
+                <div key={fIdx} className="pl-3 space-y-2 border-l-2 border-emerald-500">
+                  <h4 className="text-xs font-bold text-gray-900">
+                    {feat.title}
+                  </h4>
+                  <div className="bg-gray-50 p-3 rounded-lg border border-gray-200 space-y-1.5 text-xs">
+                    <p className="font-semibold text-[#0072CE]">{feat.story_title}</p>
+                    <p className="text-gray-700 italic">"{feat.description}"</p>
+                    <div className="pt-1">
+                      <span className="font-semibold text-gray-700 block text-[11px] uppercase mb-0.5">
+                        Acceptance Criteria
+                      </span>
+                      {feat.acceptance?.map((ac, acIdx) => (
+                        <p key={acIdx} className="text-gray-800 pl-2 leading-relaxed">
+                          {ac}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </section>
+
+        {/* 8. REFERENCE DOCUMENTS */}
         <section>
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            6. Sign off
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-3">
+            8  REFERENCE DOCUMENTS
           </h2>
           <table className="w-full text-xs text-left border-collapse border border-gray-200">
-            <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
+            <thead className="bg-[#F0F4F8] text-[#0A2A5C] font-bold">
               <tr>
-                <th className="border border-gray-300 p-2 w-1/2">Project Role</th>
-                <th className="border border-gray-300 p-2 w-1/4">Signature</th>
-                <th className="border border-gray-300 p-2 w-1/4">Date</th>
+                <th className="border border-gray-300 p-2 w-1/2">TOPIC</th>
+                <th className="border border-gray-300 p-2 w-1/2">REFERENCE DOCUMENT</th>
               </tr>
             </thead>
             <tbody>
-              {signOff.map((row, idx) => (
+              {refDocs.map((row, idx) => (
                 <tr key={idx} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2 font-semibold text-gray-800">{row[0]}</td>
-                  <td className="border border-gray-300 p-2 font-mono text-gray-400">{row[1]}</td>
-                  <td className="border border-gray-300 p-2 text-gray-600">{row[2]}</td>
+                  <td className="border border-gray-300 p-2 font-semibold text-[#0A2A5C]">{row[0]}</td>
+                  <td className="border border-gray-300 p-2 text-gray-700 font-mono text-[11px]">{row[1]}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </section>
-
-        {/* 7. APPENDIX */}
-        <section className="space-y-3">
-          <h2 className="text-lg font-bold text-[#1A365D] border-b pb-1.5 mb-3">
-            7. Appendix
-          </h2>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">7.1 Mock-ups</h3>
-            <p className="text-xs text-gray-700 mt-1">{appendix?.mockups}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">7.2 Glossary</h3>
-            <p className="text-xs text-gray-700 mt-1">{appendix?.glossary}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">7.3 Business Rules and Procedures</h3>
-            <p className="text-xs text-gray-700 mt-1 whitespace-pre-line">{appendix?.business_rules}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-[#3182CE]">7.4 Document References</h3>
-            <table className="w-full text-xs text-left border-collapse border border-gray-200 mt-2">
-              <thead className="bg-[#EDF2F7] text-[#1A365D] font-bold">
-                <tr>
-                  <th className="border border-gray-300 p-2 w-1/2">Title</th>
-                  <th className="border border-gray-300 p-2 w-1/2">Location</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appendix?.references?.map((row, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2 font-medium">{row[0]}</td>
-                    <td className="border border-gray-300 p-2 text-gray-600 font-mono text-[11px]">{row[1]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </section>
 
       </div>
@@ -555,10 +677,9 @@ export default function Step4FinalReport({
                   onChange={(e) => setSelectedSectionKey(e.target.value)}
                   className="w-full text-xs border border-gray-300 rounded-lg p-2.5 bg-white text-gray-800"
                 >
-                  <option value="project_overview">2. Project Overview & Scope</option>
-                  <option value="existing_processes">4. Existing Processes</option>
-                  <option value="deliverables">5. Project Requirements (PREQ/CREQ & NFRs)</option>
-                  <option value="appendix_and_signoff">6 & 7. Sign-off & Appendix</option>
+                  <option value="deliverables">6 & 7. EPICS (Functional & Non-Functional User Stories)</option>
+                  <option value="existing_processes">4. In Scope & Flow Overview</option>
+                  <option value="project_overview">1 & 2. Version History & File Details</option>
                 </select>
               </div>
 
@@ -570,7 +691,7 @@ export default function Step4FinalReport({
                   rows={3}
                   value={customInstruction}
                   onChange={(e) => setCustomInstruction(e.target.value)}
-                  placeholder="e.g. Expand on error codes and retry logic, or add 3 more NFR constraints..."
+                  placeholder="e.g. Add 3 more user stories for document processing, or expand exception handling criteria..."
                   className="w-full text-xs border border-gray-300 rounded-lg p-2.5 text-gray-800"
                 />
               </div>
@@ -579,13 +700,13 @@ export default function Step4FinalReport({
             <div className="flex justify-end gap-2.5 mt-5">
               <button
                 onClick={() => setRegenModalOpen(false)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleRegenerate}
-                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#E65100] hover:bg-[#D84315] text-white shadow-sm"
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#E65100] hover:bg-[#D84315] text-white shadow-sm cursor-pointer"
               >
                 Regenerate Now
               </button>
