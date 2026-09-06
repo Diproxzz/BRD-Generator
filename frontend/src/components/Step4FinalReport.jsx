@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Download, Edit3, Save, RefreshCw, CheckCircle2, FileText, 
-  Layers, ShieldCheck, ArrowLeft, Loader2, Image as ImageIcon, Check 
+  Layers, ShieldCheck, ArrowLeft, Loader2, Image as ImageIcon, Check, Bookmark, BookOpen
 } from 'lucide-react';
 
 export default function Step4FinalReport({ 
@@ -15,6 +15,12 @@ export default function Step4FinalReport({
   const [data, setData] = useState(brdData || {});
   const [isEditing, setIsEditing] = useState(false);
   const [regenModalOpen, setRegenModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (brdData && Object.keys(brdData).length > 0) {
+      setData(brdData);
+    }
+  }, [brdData]);
   const [selectedSectionKey, setSelectedSectionKey] = useState("deliverables");
   const [customInstruction, setCustomInstruction] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -304,62 +310,62 @@ export default function Step4FinalReport({
   ];
 
   const tocItems = [
-    { title: "1   Version History", page: "4", level: 1 },
-    { title: "2   File Details", page: "4", level: 1 },
-    { title: "3   Functional Process Flow Diagram", page: "4", level: 1 },
-    { title: "4   In Scope Requirements", page: "5", level: 1 },
-    { title: "4.1   Functional Requirements", page: "5", level: 2 },
-    { title: "4.1.1   3 document types", page: "5", level: 3 },
-    { title: "4.1.2   Canned Questions", page: "5", level: 3 },
-    { title: "4.1.3   Ability to ask ad-hoc questions", page: "5", level: 3 },
-    { title: "4.1.4   Download Q&A in CSV format", page: "5", level: 3 },
-    { title: "4.1.5   Reference Source doc page numbers in response", page: "5", level: 3 },
-    { title: "4.1.6   Accuracy of the answers in-line with POC", page: "5", level: 3 },
-    { title: "4.1.7   Support only desktop browsers - Edge & Chrome", page: "5", level: 3 },
-    { title: "4.2   Non - Functional Requirements", page: "5", level: 2 },
-    { title: "4.2.1   Integration with Lockton AD (Group based authentication)", page: "5", level: 3 },
-    { title: "4.2.2   Performance in-line with POC", page: "5", level: 3 },
-    { title: "4.2.3   Auditing, logging, and error handling", page: "5", level: 3 },
-    { title: "4.2.4   Hook logs into existing monitoring system", page: "5", level: 3 },
-    { title: "4.2.5   Application accessible within enterprise env. only", page: "5", level: 3 },
-    { title: "4.2.6   Only PDF documents (<5MB) supported", page: "5", level: 3 },
-    { title: "5   Out Of Scope Requirements", page: "5", level: 1 },
-    { title: "5.1.1   New document types such as Cyber policies", page: "5", level: 2 },
-    { title: "5.1.2   New canned questions including prompt tuning", page: "5", level: 2 },
-    { title: "5.1.3   Admin interface (configuration via DB)", page: "5", level: 2 },
-    { title: "5.1.4   Multi-region provisioning of LLM (Azure OpenAI)", page: "5", level: 2 },
-    { title: "5.1.5   Performance, Security & Automation testing", page: "5", level: 2 },
-    { title: "5.1.6   Support for mobile devices", page: "5", level: 2 },
-    { title: "5.1.7   Availability (handled in subsequent phases)", page: "5", level: 2 },
-    { title: "5.1.8   Provisioning / configuration of CI/CD Pipeline", page: "5", level: 2 },
-    { title: "5.1.9   Workflow solution include Document based Auth", page: "5", level: 2 },
-    { title: "6   EPICS (Functional)", page: "6", level: 1 },
-    { title: "6.1   EPIC 1 - DASHBOARD PAGE", page: "6", level: 2 },
-    { title: "6.1.1   FEATURE 1: DEAL SUMMARY", page: "6", level: 3 },
-    { title: "6.1.2   FEATURE 2: DEAL DETAILS", page: "9", level: 3 },
-    { title: "6.1.3   FEATURE 3: CREATE NEW DEAL", page: "13", level: 3 },
-    { title: "6.1.4   FEATURE 4: DOCUMENT SUMMARY", page: "17", level: 3 },
-    { title: "6.2   EPIC 2 - CHATBOT PAGE", page: "21", level: 2 },
-    { title: "6.2.1   FEATURE 1: CHATBOT FEATURES", page: "21", level: 3 },
-    { title: "6.2.2   FEATURE 2: QUESTION TAGS TAB", page: "22", level: 3 },
-    { title: "6.2.3   FEATURE 3: ALL FAQS TAB", page: "24", level: 3 },
-    { title: "6.2.4   FEATURE 4: CHAT BOX", page: "24", level: 3 },
-    { title: "6.2.5   FEATURE 5: CHAT ACCESS OPTIONS", page: "24", level: 3 },
-    { title: "7   EPICS (Non-Functional)", page: "26", level: 1 },
-    { title: "7.1   EPIC 1 - APPLICATION ACCESSIBILITY", page: "26", level: 2 },
-    { title: "7.1.1   FEATURE 1: APPLICATION BROWSER", page: "26", level: 3 },
-    { title: "7.1.2   FEATURE 2: APPLICATION LOGIN", page: "26", level: 3 },
-    { title: "7.1.3   FEATURE 3: APPLICATION SECURITY", page: "26", level: 3 },
-    { title: "7.2   EPIC 2 - EXCEPTION HANDLING", page: "27", level: 2 },
-    { title: "7.2.1   FEATURE 1: DOCUMENT UPLOAD", page: "27", level: 3 },
-    { title: "7.2.2   FEATURE 2: DOCUMENT PROCESSING", page: "27", level: 3 },
-    { title: "7.2.3   FEATURE 3: QUERY RESPONSE TIMING", page: "28", level: 3 },
-    { title: "7.3   EPIC 3 - APPLICATION MONITORING", page: "28", level: 2 },
-    { title: "7.3.1   FEATURE 1: AUDITING", page: "28", level: 3 },
-    { title: "7.3.2   FEATURE 2: LOGGING", page: "28", level: 3 },
-    { title: "7.3.3   FEATURE 3: MONITORING", page: "29", level: 3 },
-    { title: "8   USER STORIES ALIGNMENT WITH POC", page: "29", level: 1 },
-    { title: "9   REFERENCE DOCUMENTS", page: "30", level: 1 }
+    { title: "1   Version History", page: "4", level: 1, targetId: "section-1" },
+    { title: "2   File Details", page: "4", level: 1, targetId: "section-2" },
+    { title: "3   Functional Process Flow Diagram", page: "4", level: 1, targetId: "section-3" },
+    { title: "4   In Scope Requirements", page: "5", level: 1, targetId: "section-4" },
+    { title: "4.1   Functional Requirements", page: "5", level: 2, targetId: "section-4" },
+    { title: "4.1.1   3 document types", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.1.2   Canned Questions", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.1.3   Ability to ask ad-hoc questions", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.1.4   Download Q&A in CSV format", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.1.5   Reference Source doc page numbers in response", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.1.6   Accuracy of the answers in-line with POC", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.1.7   Support only desktop browsers - Edge & Chrome", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.2   Non - Functional Requirements", page: "5", level: 2, targetId: "section-4" },
+    { title: "4.2.1   Integration with Lockton AD (Group based authentication)", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.2.2   Performance in-line with POC", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.2.3   Auditing, logging, and error handling", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.2.4   Hook logs into existing monitoring system", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.2.5   Application accessible within enterprise env. only", page: "5", level: 3, targetId: "section-4" },
+    { title: "4.2.6   Only PDF documents (<5MB) supported", page: "5", level: 3, targetId: "section-4" },
+    { title: "5   Out Of Scope Requirements", page: "5", level: 1, targetId: "section-5" },
+    { title: "5.1.1   New document types such as Cyber policies", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.2   New canned questions including prompt tuning", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.3   Admin interface (configuration via DB)", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.4   Multi-region provisioning of LLM (Azure OpenAI)", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.5   Performance, Security & Automation testing", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.6   Support for mobile devices", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.7   Availability (handled in subsequent phases)", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.8   Provisioning / configuration of CI/CD Pipeline", page: "5", level: 2, targetId: "section-5" },
+    { title: "5.1.9   Workflow solution include Document based Auth", page: "5", level: 2, targetId: "section-5" },
+    { title: "6   EPICS (Functional)", page: "6", level: 1, targetId: "section-6" },
+    { title: "6.1   EPIC 1 - DASHBOARD PAGE", page: "6", level: 2, targetId: "section-6" },
+    { title: "6.1.1   FEATURE 1: DEAL SUMMARY", page: "6", level: 3, targetId: "section-6" },
+    { title: "6.1.2   FEATURE 2: DEAL DETAILS", page: "9", level: 3, targetId: "section-6" },
+    { title: "6.1.3   FEATURE 3: CREATE NEW DEAL", page: "13", level: 3, targetId: "section-6" },
+    { title: "6.1.4   FEATURE 4: DOCUMENT SUMMARY", page: "17", level: 3, targetId: "section-6" },
+    { title: "6.2   EPIC 2 - CHATBOT PAGE", page: "21", level: 2, targetId: "section-6" },
+    { title: "6.2.1   FEATURE 1: CHATBOT FEATURES", page: "21", level: 3, targetId: "section-6" },
+    { title: "6.2.2   FEATURE 2: QUESTION TAGS TAB", page: "22", level: 3, targetId: "section-6" },
+    { title: "6.2.3   FEATURE 3: ALL FAQS TAB", page: "24", level: 3, targetId: "section-6" },
+    { title: "6.2.4   FEATURE 4: CHAT BOX", page: "24", level: 3, targetId: "section-6" },
+    { title: "6.2.5   FEATURE 5: CHAT ACCESS OPTIONS", page: "24", level: 3, targetId: "section-6" },
+    { title: "7   EPICS (Non-Functional)", page: "26", level: 1, targetId: "section-7" },
+    { title: "7.1   EPIC 1 - APPLICATION ACCESSIBILITY", page: "26", level: 2, targetId: "section-7" },
+    { title: "7.1.1   FEATURE 1: APPLICATION BROWSER", page: "26", level: 3, targetId: "section-7" },
+    { title: "7.1.2   FEATURE 2: APPLICATION LOGIN", page: "26", level: 3, targetId: "section-7" },
+    { title: "7.1.3   FEATURE 3: APPLICATION SECURITY", page: "26", level: 3, targetId: "section-7" },
+    { title: "7.2   EPIC 2 - EXCEPTION HANDLING", page: "27", level: 2, targetId: "section-7" },
+    { title: "7.2.1   FEATURE 1: DOCUMENT UPLOAD", page: "27", level: 3, targetId: "section-7" },
+    { title: "7.2.2   FEATURE 2: DOCUMENT PROCESSING", page: "27", level: 3, targetId: "section-7" },
+    { title: "7.2.3   FEATURE 3: QUERY RESPONSE TIMING", page: "28", level: 3, targetId: "section-7" },
+    { title: "7.3   EPIC 3 - APPLICATION MONITORING", page: "28", level: 2, targetId: "section-7" },
+    { title: "7.3.1   FEATURE 1: AUDITING", page: "28", level: 3, targetId: "section-7" },
+    { title: "7.3.2   FEATURE 2: LOGGING", page: "28", level: 3, targetId: "section-7" },
+    { title: "7.3.3   FEATURE 3: MONITORING", page: "29", level: 3, targetId: "section-7" },
+    { title: "8   USER STORIES ALIGNMENT WITH POC", page: "29", level: 1, targetId: "section-8" },
+    { title: "9   REFERENCE DOCUMENTS", page: "30", level: 1, targetId: "section-9" }
   ];
 
   return (
@@ -434,6 +440,30 @@ export default function Step4FinalReport({
         </div>
       </div>
 
+      {/* Sticky Document Outline & Index Navigation Bar */}
+      <div className="sticky top-2 z-30 max-w-5xl mx-auto mb-4 bg-white/95 backdrop-blur-md rounded-xl p-3 border border-gray-300/80 shadow-md flex flex-wrap items-center gap-2 text-xs">
+        <span className="font-bold text-[#0A2A5C] flex items-center gap-1.5 mr-1 text-[11px] uppercase tracking-wider">
+          <Bookmark className="w-3.5 h-3.5 text-[#0072CE]" />
+          Index Jump:
+        </span>
+        <a
+          href="#index-page"
+          className="px-3 py-1 rounded-lg bg-[#0072CE] hover:bg-[#005ba3] text-white font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+        >
+          <BookOpen className="w-3.5 h-3.5" />
+          <span>Table of Contents (Index Page)</span>
+        </a>
+        <a href="#section-1" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">1. History</a>
+        <a href="#section-2" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">2. Files</a>
+        <a href="#section-3" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">3. Flow</a>
+        <a href="#section-4" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">4. In-Scope</a>
+        <a href="#section-5" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">5. Out-of-Scope</a>
+        <a href="#section-6" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">6. Functional Epics</a>
+        <a href="#section-7" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">7. NFR Epics</a>
+        <a href="#section-8" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">8. POC Alignment</a>
+        <a href="#section-9" className="px-2 py-1 rounded hover:bg-gray-100 text-gray-700 font-medium transition-colors">9. References</a>
+      </div>
+
       {/* Rendered Document View (Matching PDF Template Hierarchy) */}
       <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-300/80 shadow-md max-w-5xl mx-auto space-y-8 text-gray-800 font-sans">
         
@@ -457,21 +487,34 @@ export default function Step4FinalReport({
           </div>
         </div>
 
-        {/* TABLE OF CONTENTS (Content Page matching PDF Pages 1 & 2) */}
-        <section className="bg-[#FAFBFD] border border-blue-100 rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between border-b-2 border-[#0A2A5C] pb-2 mb-4">
-            <h2 className="text-lg font-bold text-[#0A2A5C] tracking-tight">
-              Table of Contents
-            </h2>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-[#0072CE] border border-blue-200">
-              Content Page • Strict Corporate Standard
+        {/* DEDICATED INDEX PAGE (Table of Contents matching Page 2 & Page 3 of PDF) */}
+        <section id="index-page" className="scroll-mt-16 bg-[#FAFBFD] border-2 border-[#0A2A5C]/30 rounded-2xl p-6 md:p-8 shadow-sm space-y-4 relative">
+          {/* Running Corporate Header matching PDF */}
+          <div className="flex justify-between items-center text-[11px] text-gray-500 border-b border-gray-200 pb-2.5 font-medium">
+            <span>&lt;Function/ Name&gt; &lt;Sub Function Name&gt; &lt;Name of Process&gt; | (Ver. 2.1/2026)</span>
+            <span className="font-extrabold text-[#0A2A5C] text-xs tracking-tight">LTIMindtree</span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between border-b-2 border-[#0A2A5C] pb-2 pt-1">
+            <div>
+              <h2 className="text-2xl font-black text-[#0A2A5C] tracking-tight">
+                Table of Contents (Index Page)
+              </h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Corporate Standard Requirements Hierarchy • Page 2 of 30
+              </p>
+            </div>
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-[#0072CE] border border-blue-300 shadow-2xs">
+              📄 Dedicated Index Page
             </span>
           </div>
-          <div className="space-y-1.5 font-sans">
+
+          <div className="space-y-1 font-sans pt-1">
             {tocItems.map((item, idx) => (
-              <div
+              <a
                 key={idx}
-                className={`flex items-baseline text-xs ${
+                href={`#${item.targetId}`}
+                className={`flex items-baseline text-xs group hover:bg-blue-50/70 py-1 px-1.5 rounded transition-colors cursor-pointer ${
                   item.level === 1
                     ? 'font-bold text-[#0A2A5C] pt-2'
                     : item.level === 2
@@ -479,16 +522,24 @@ export default function Step4FinalReport({
                     : 'text-gray-700 pl-10'
                 }`}
               >
-                <span className="shrink-0">{item.title}</span>
-                <span className="flex-1 mx-2 border-b border-dotted border-gray-400 select-none min-w-[20px]" />
-                <span className="shrink-0 font-mono text-gray-600 font-semibold">{item.page}</span>
-              </div>
+                <span className="shrink-0 group-hover:text-[#0072CE] transition-colors">{item.title}</span>
+                <span className="flex-1 mx-2 border-b-2 border-dotted border-gray-300 select-none min-w-[20px]" />
+                <span className="shrink-0 font-mono text-gray-600 font-bold px-1.5 py-0.5 rounded group-hover:bg-blue-200/60 group-hover:text-[#0072CE] transition-colors">
+                  {item.page}
+                </span>
+              </a>
             ))}
+          </div>
+
+          {/* Running Corporate Footer matching PDF */}
+          <div className="flex justify-between items-center text-[10px] text-gray-400 border-t border-gray-200 pt-2.5 font-medium">
+            <span>LTIMindtree | Privileged and Confidential 2026</span>
+            <span>Page 2 of 30</span>
           </div>
         </section>
 
         {/* 1. VERSION HISTORY */}
-        <section>
+        <section id="section-1" className="scroll-mt-16">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-3 flex items-center gap-2">
             <span>1  Version History</span>
           </h2>
@@ -513,7 +564,7 @@ export default function Step4FinalReport({
         </section>
 
         {/* 2. FILE DETAILS */}
-        <section>
+        <section id="section-2" className="scroll-mt-16">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-3">
             2  File Details
           </h2>
@@ -538,7 +589,7 @@ export default function Step4FinalReport({
         </section>
 
         {/* 3. FUNCTIONAL PROCESS FLOW DIAGRAM */}
-        <section className="space-y-3">
+        <section id="section-3" className="scroll-mt-16 space-y-3">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
             3  Functional Process Flow Diagram
           </h2>
@@ -558,7 +609,7 @@ export default function Step4FinalReport({
         </section>
 
         {/* 4. IN SCOPE REQUIREMENTS */}
-        <section className="space-y-4">
+        <section id="section-4" className="scroll-mt-16 space-y-4">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
             4  In Scope Requirements
           </h2>
@@ -602,7 +653,7 @@ export default function Step4FinalReport({
         </section>
 
         {/* 5. OUT OF SCOPE REQUIREMENTS */}
-        <section>
+        <section id="section-5" className="scroll-mt-16">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
             5  Out Of Scope Requirements
           </h2>
@@ -617,7 +668,7 @@ export default function Step4FinalReport({
         </section>
 
         {/* 6. EPICS (FUNCTIONAL) */}
-        <section className="space-y-6">
+        <section id="section-6" className="scroll-mt-16 space-y-6">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
             6  EPICS (Functional)
           </h2>
@@ -683,7 +734,7 @@ export default function Step4FinalReport({
         </section>
 
         {/* 7. EPICS (NON-FUNCTIONAL) */}
-        <section className="space-y-6">
+        <section id="section-7" className="scroll-mt-16 space-y-6">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
             7  EPICS (Non-Functional)
           </h2>
@@ -719,10 +770,23 @@ export default function Step4FinalReport({
           ))}
         </section>
 
-        {/* 8. REFERENCE DOCUMENTS */}
-        <section>
+        {/* 8. USER STORIES ALIGNMENT WITH POC */}
+        <section id="section-8" className="scroll-mt-16 space-y-3">
+          <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-2">
+            8  USER STORIES ALIGNMENT WITH POC
+          </h2>
+          <div className="bg-[#F8FAFC] border border-blue-200 rounded-xl p-4 text-xs text-gray-700 leading-relaxed">
+            <p className="font-semibold text-[#0A2A5C] mb-1">Traceability & POC Verification</p>
+            <p>
+              All functional epics, deal features, and chatbot question tags specified above have been mapped and validated against the exploratory Proof of Concept (POC) baseline. Acceptance criteria maintain parity with demonstrated response timings (&lt;90 seconds for document parsing and &lt;60 seconds for complex query generation) while strictly preserving source document page citations and desktop browser support.
+            </p>
+          </div>
+        </section>
+
+        {/* 9. REFERENCE DOCUMENTS */}
+        <section id="section-9" className="scroll-mt-16">
           <h2 className="text-base font-bold text-[#0A2A5C] border-b pb-1.5 mb-3">
-            8  REFERENCE DOCUMENTS
+            9  REFERENCE DOCUMENTS
           </h2>
           <table className="w-full text-xs text-left border-collapse border border-gray-200">
             <thead className="bg-[#F0F4F8] text-[#0A2A5C] font-bold">

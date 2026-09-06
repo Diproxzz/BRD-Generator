@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, CheckCircle2, Copy, Check, Sliders, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Copy, Check, Sliders, ExternalLink, Eye, Layers } from 'lucide-react';
 
 export default function TopBar({ session, activeStep, onStepChange, onOpenAgents, onOpenSettings }) {
   const [copied, setCopied] = useState(false);
@@ -83,9 +83,20 @@ export default function TopBar({ session, activeStep, onStepChange, onOpenAgents
 
           <button 
             onClick={() => onStepChange(activeStep === 4 ? 1 : 4)}
-            className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#E65100] hover:bg-[#D84315] text-white shadow-sm transition-all"
+            className="flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#E65100] hover:bg-[#D84315] text-white shadow-sm transition-all cursor-pointer active:scale-95"
+            title={activeStep === 4 ? "Return to Workflow Steps" : "Preview Generated BRD & Index Page"}
           >
-            Workflow View
+            {activeStep === 4 ? (
+              <>
+                <Layers className="w-3.5 h-3.5" />
+                <span>Workflow Steps</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-3.5 h-3.5" />
+                <span>Document Preview (Index & BRD)</span>
+              </>
+            )}
           </button>
 
           <button 
