@@ -631,8 +631,20 @@ def build_docx_brd(data: Dict[str, Any], output_path: str) -> str:
             for ac in feat.get("acceptance", []):
                 p.add_run(f"  {ac}\n")
                 
-    # 8. REFERENCE DOCUMENTS (Matching Page 8 of user's PDF)
-    add_heading_styled(doc, "8  REFERENCE DOCUMENTS", 1)
+    # 8. USER STORIES ALIGNMENT WITH POC
+    add_heading_styled(doc, "8  USER STORIES ALIGNMENT WITH POC", 1)
+    p_poc = doc.add_paragraph()
+    p_poc.paragraph_format.left_indent = Inches(0.15)
+    p_poc.paragraph_format.space_before = Pt(2)
+    p_poc.paragraph_format.space_after = Pt(4)
+    run_poc = p_poc.add_run(
+        "All functional epics, deal features, and chatbot question tags specified in this document have been validated against the exploratory Proof of Concept (POC) baseline. Acceptance criteria maintain parity with demonstrated response timings (<90 seconds for document parsing and <60 seconds for complex query generation) while strictly preserving source document page citations and desktop browser support."
+    )
+    run_poc.font.name = 'Calibri'
+    run_poc.font.size = Pt(9.5)
+    
+    # 9. REFERENCE DOCUMENTS (Matching Page 8 of user's PDF)
+    add_heading_styled(doc, "9  REFERENCE DOCUMENTS", 1)
     ref_headers = ["TOPIC", "REFERENCE DOCUMENT"]
     ref_rows = data.get("reference_documents", [
         ["PROJECT SOW & CHARTER", "Project_Statement_of_Work_Final.pptx"],

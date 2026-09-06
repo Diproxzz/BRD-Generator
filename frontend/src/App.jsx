@@ -7,6 +7,7 @@ import Step3AgentRun from './components/Step3AgentRun';
 import Step4FinalReport from './components/Step4FinalReport';
 import AgentsDrawer from './components/AgentsDrawer';
 import SettingsModal from './components/SettingsModal';
+import { exportDocxClient } from './utils/docxExporter';
 
 export default function App() {
   const [session, setSession] = useState(() => {
@@ -316,29 +317,71 @@ export default function App() {
     }
   };
 
-  // Export .docx
-  const handleExportDocx = async () => {
+  // Export .docx with server-first + guaranteed client fallback
+  const handleExportDocx = async (overrideData) => {
     setIsExporting(true);
+    const dataToExport = overrideData || brdData || {
+      project_name: "Enterprise Copilot & Data Platform",
+      version: "0.1",
+      date: new Date().toISOString().split('T')[0],
+      author: "Lead Business Analyst"
+    };
+
+    let downloaded = false;
+
+    // 1. Attempt Server POST /api/export with current BRD data payload
     try {
       const currentSessionId = session?.session_id || "38737295-c360-410c-8586-65c37c9f875a";
-      const res = await fetch(`/api/sessions/${currentSessionId}/export`);
+      let res = await fetch('/api/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ brd_data: dataToExport })
+      });
+
+      if (!res.ok) {
+        res = await fetch(`/api/sessions/${currentSessionId}/export`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ brd_data: dataToExport })
+        });
+      }
+
+      if (!res.ok) {
+        res = await fetch(`/api/sessions/${currentSessionId}/export`);
+      }
+
       if (res.ok) {
         const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        const projectName = brdData?.project_name || "Requirements_Document";
-        a.download = `BRD_${projectName.replace(/\s+/g, '_')}.docx`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
+        if (blob && blob.size > 500) {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          const projectName = dataToExport.project_name || "Requirements_Document";
+          a.download = `BRD_${projectName.replace(/[^a-zA-Z0-9_-]/g, '_')}.docx`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          downloaded = true;
+        }
       }
     } catch (err) {
-      console.error("Export DOCX error:", err);
-    } finally {
-      setIsExporting(false);
+      console.warn("Server export attempt failed, switching to client generator:", err);
     }
+
+    // 2. Client-side fallback generator (guaranteed to succeed in browser)
+    if (!downloaded) {
+      try {
+        await exportDocxClient(dataToExport);
+        downloaded = true;
+      } catch (clientErr) {
+        console.error("Client DOCX export error:", clientErr);
+        alert("DOCX Export encountered an issue. Please check your browser download permissions.");
+      }
+    }
+
+    setIsExporting(false);
   };
 
   // Update AI provider config

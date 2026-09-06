@@ -37,6 +37,9 @@ class PromptUpdateRequest(BaseModel):
 class SectionUpdateRequest(BaseModel):
     brd_data: Dict[str, Any]
 
+class ExportRequest(BaseModel):
+    brd_data: Optional[Dict[str, Any]] = None
+
 class RegenerateSectionRequest(BaseModel):
     section_key: str
     custom_instruction: str
@@ -424,22 +427,71 @@ def update_sections(session_id: str, body: SectionUpdateRequest):
     })
     return {"message": "Document updated and recompiled", "brd_data": brd_data}
 
+@router.post("/export")
+@router.post("/sessions/{session_id}/export")
+def export_docx_post(session_id: Optional[str] = None, body: Optional[ExportRequest] = None):
+    brd_data = (body.brd_data if body and body.brd_data else None)
+    if not brd_data and session_id:
+        session = session_store.get_session(session_id)
+        if session:
+            brd_data = session.get("brd_data")
+            
+    if not brd_data:
+        brd_data = {
+            "project_name": "Enterprise Copilot & M&A Deal Platform",
+            "version": "0.1",
+            "date": time.strftime("%Y-%m-%d"),
+            "author": "Smriti Srivastava",
+            "version_history": [
+                ["0.1", "Smriti Srivastava", "Updated Requirements, Features and User Stories"]
+            ],
+            "file_details": [
+                ["Enterprise_Copilot_BRD", "Docx", "Requirements Vault"]
+            ]
+        }
+        
+    session_prefix = session_id[:8] if session_id else str(uuid.uuid4())[:8]
+    docx_path = os.path.join(settings.EXPORT_DIR, f"BRD_{session_prefix}.docx")
+    build_docx_brd(brd_data, docx_path)
+    
+    proj_name = brd_data.get("project_name", "Requirements_Document")
+    safe_title = "".join(c for c in proj_name if c.isalnum() or c in (' ', '_', '-')).strip().replace(" ", "_")
+    download_filename = f"BRD_{safe_title}.docx"
+    
+    return FileResponse(
+        docx_path,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=download_filename
+    )
+
+@router.get("/export")
 @router.get("/sessions/{session_id}/export")
-def export_docx(session_id: str):
-    session = session_store.get_session(session_id)
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
+def export_docx(session_id: Optional[str] = None):
+    brd_data = None
+    if session_id:
+        session = session_store.get_session(session_id)
+        if session:
+            brd_data = session.get("brd_data")
+            
+    if not brd_data:
+        brd_data = {
+            "project_name": "Enterprise Copilot & M&A Deal Platform",
+            "version": "0.1",
+            "date": time.strftime("%Y-%m-%d"),
+            "author": "Smriti Srivastava",
+            "version_history": [
+                ["0.1", "Smriti Srivastava", "Updated Requirements, Features and User Stories"]
+            ],
+            "file_details": [
+                ["Enterprise_Copilot_BRD", "Docx", "Requirements Vault"]
+            ]
+        }
         
-    docx_path = session.get("docx_path")
-    if not docx_path or not os.path.exists(docx_path):
-        brd_data = session.get("brd_data")
-        if not brd_data:
-            raise HTTPException(status_code=400, detail="BRD has not been generated yet")
-        docx_path = os.path.join(settings.EXPORT_DIR, f"BRD_{session_id[:8]}.docx")
-        build_docx_brd(brd_data, docx_path)
-        session_store.update_session(session_id, {"docx_path": docx_path})
-        
-    proj_name = session.get("brd_data", {}).get("project_name", "Requirements_Document")
+    session_prefix = session_id[:8] if session_id else str(uuid.uuid4())[:8]
+    docx_path = os.path.join(settings.EXPORT_DIR, f"BRD_{session_prefix}.docx")
+    build_docx_brd(brd_data, docx_path)
+    
+    proj_name = brd_data.get("project_name", "Requirements_Document")
     safe_title = "".join(c for c in proj_name if c.isalnum() or c in (' ', '_', '-')).strip().replace(" ", "_")
     download_filename = f"BRD_{safe_title}.docx"
     

@@ -430,7 +430,7 @@ export default function Step4FinalReport({
           </button>
 
           <button
-            onClick={onExportDocx}
+            onClick={() => onExportDocx && onExportDocx(data)}
             disabled={isExporting}
             className="px-4 py-1.5 rounded-lg text-xs font-bold bg-[#E65100] hover:bg-[#D84315] text-white shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 disabled:opacity-50"
           >
