@@ -359,7 +359,7 @@ export async function exportDocxClient(data) {
       spacing: { before: 60, after: 60 },
       children: [
         new TextRun({
-          text: "All functional epics, deal features, and chatbot question tags specified in this document have been validated against the exploratory Proof of Concept (POC) baseline. Acceptance criteria maintain parity with demonstrated response timings (<90 seconds for document parsing and <60 seconds for complex query generation) while strictly preserving source document page citations and desktop browser support.",
+          text: data?.poc_alignment || "All functional epics, deal features, and chatbot question tags specified in this document have been validated against the exploratory Proof of Concept (POC) baseline. Acceptance criteria maintain parity with demonstrated response timings (<90 seconds for document parsing and <60 seconds for complex query generation) while strictly preserving source document page citations and desktop browser support.",
           font: "Calibri",
           size: 19
         })
